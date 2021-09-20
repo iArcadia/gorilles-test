@@ -51,6 +51,8 @@ php artisan migrate:refresh --seed
 
 ## L'API
 
+Chaque endpoint renvoie une réponse au format JSON.
+
 ### Users
 
 ```

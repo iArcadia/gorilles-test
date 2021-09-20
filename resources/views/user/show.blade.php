@@ -29,7 +29,7 @@
 
 <a href="{{ route('user.index') }}">Retour</a>
 <a href="{{ route('user.edit', $user) }}">Modifier</a>
-<a id="delete-link" href="{{ route('user.destroy', $user) }}">Supprimer</a>
+<a id="delete-link" href="{{ route('user.destroy') }}" data-id="{{ $user->id }}">Supprimer</a>
 @endsection
 
 @section('js')
@@ -45,9 +45,15 @@
                 confirmation = window.confirm('Êtes-vous sûr de supprimer cet utilisateur ?');
             
             if (confirmation) {
+                const userId = +$(self).data('id'),
+                    data = {
+                        id: userId
+                    };
+                
                 $.ajax({
                     url: $(self).attr('href'),
                     type: 'DELETE',
+                    data: data,
                     success: data => {
                         window.location.replace(`{{ url('/') }}/user`);
                     }

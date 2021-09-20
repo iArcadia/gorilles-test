@@ -50,6 +50,28 @@ class UserController extends Controller
     }
     
     /**
+     * Get all users.
+     *
+     * @return Response
+     */
+    public function all() {
+        $users = User::all();
+        
+        return response()->json(compact('users'));
+    }
+    
+    /**
+     * Get a specified user by its ID.
+     *
+     * @param User $user
+     *
+     * @return Response
+     */
+    public function get(User $user) {
+        return response()->json(compact('user'));
+    }
+    
+    /**
      * Store a new user into the database from a POST request.
      *
      * @param Request $request
@@ -66,28 +88,28 @@ class UserController extends Controller
      * Update an existing user from the database from a PUT request.
      *
      * @param Request $request
-     * @param User $user
      *
      * @return Response
      */
-    public function update(Request $request, User $user) {
-        $user->fill($request->all())->save();
+    public function update(Request $request) {
+        $user = User::findOrFail($request->get('id'));
+        $result = $user->fill($request->all())->save();
         
-        return response()->json(compact('user'));
+        return response()->json(compact('result'));
     }
     
     /**
      * Soft delete an existing user from the database from a DELETE request.
      *
      * @param Request $request
-     * @param User $user
      *
      * @return Response
      */
     public function destroy(Request $request, User $user) {
+        $user = User::findOrFail($request->get('id'));
         $user->events()->detach();
-        $user->delete();
+        $result = $user->delete();
         
-        return response()->json(compact('user'));
+        return response()->json(compact('result'));
     }
 }

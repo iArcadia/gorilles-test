@@ -54,6 +54,28 @@ class EventController extends Controller
     }
     
     /**
+     * Get all events.
+     *
+     * @return Response
+     */
+    public function all() {
+        $events = Event::all();
+        
+        return response()->json(compact('events'));
+    }
+    
+    /**
+     * Get a specified event by its ID.
+     *
+     * @param Event $event
+     *
+     * @return Response
+     */
+    public function get(Event $event) {
+        return response()->json(compact('event'));
+    }
+    
+    /**
      * Store a new event into the database from a POST request.
      *
      * @param Request $request
@@ -70,28 +92,28 @@ class EventController extends Controller
      * Update an existing event from the database from a PUT request.
      *
      * @param Request $request
-     * @param Event $event
      *
      * @return Response
      */
-    public function update(Request $request, Event $event) {
-        $event->fill($request->all())->save();
+    public function update(Request $request) {
+        $event = Event::findOrFail($request->get('id'));
+        $result = $event->fill($request->all())->save();
         
-        return response()->json(compact('event'));
+        return response()->json(compact('result'));
     }
     
     /**
      * Soft delete an existing event from the database from a DELETE request.
      *
      * @param Request $request
-     * @param Event $event
      *
      * @return Response
      */
-    public function destroy(Request $request, Event $event) {
+    public function destroy(Request $request) {
+        $event = Event::findOrFail($request->get('id'));
         $event->users()->detach();
-        $event->delete();
+        $result = $event->delete();
         
-        return response()->json(compact('event'));
+        return response()->json(compact('result'));
     }
 }

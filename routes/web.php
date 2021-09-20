@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReservationController;
@@ -19,6 +20,9 @@ use App\Http\Controllers\ReservationController;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::get('test/get', [TestController::class, 'get']);
+Route::get('test/post', [TestController::class, 'post']);
 
 Route::prefix('event')->name('event.')->group(function() {
     Route::get('/', [EventController::class, 'index'])->name('index');

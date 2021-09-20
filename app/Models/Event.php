@@ -34,6 +34,6 @@ class Event extends Model
      * Retrieves all users of an event.
      */
     public function users() {
-        return $this->belongsToMany(User::class, 'reservations');
+        return $this->belongsToMany(User::class, 'reservations')->withPivot('created_at');
     }
 }

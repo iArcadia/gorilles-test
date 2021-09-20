@@ -24,7 +24,7 @@
 
 <a href="{{ route('event.index') }}">Retour</a>
 <a href="{{ route('event.edit', $event) }}">Modifier</a>
-<a id="delete-link" href="{{ route('event.destroy', $event) }}">Supprimer</a>
+<a id="delete-link" href="{{ route('event.destroy') }}" data-id="{{ $event->id }}">Supprimer</a>
 
 <h2>Réservations</h2>
 
@@ -68,9 +68,15 @@
                 confirmation = window.confirm('Êtes-vous sûr de supprimer cet événement ?');
             
             if (confirmation) {
+                const eventId = +$(self).data('id'),
+                    data = {
+                        id: eventId
+                    };
+                
                 $.ajax({
                     url: $(self).attr('href'),
                     type: 'DELETE',
+                    data: data,
                     success: data => {
                         window.location.replace(`{{ url('/') }}/event`);
                     }

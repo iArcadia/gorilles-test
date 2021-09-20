@@ -4,6 +4,8 @@
 
 @section('content')
 <form action="{{ route('user.update', $user) }}" method="post">
+    <input type="hidden" name="id" value="{{ $user->id }}">
+    
     <table>
         <tbody>
             <tr>
@@ -49,14 +51,15 @@
         $('form').on('submit', function(e) {
             e.preventDefault();
             
-            const self = this;
+            const self = this,
+                userId = +$('input[name=id]').val();
             
             $.ajax({
                 url: $(self).attr('action'),
                 type: 'PUT',
                 data: $(self).serialize(),
                 success: data => {
-                    window.location.replace(`{{ url('/') }}/user/show/${data.user.id}`);
+                    window.location.replace(`{{ url('/') }}/user/show/${userId}`);
                 }
             });
         });

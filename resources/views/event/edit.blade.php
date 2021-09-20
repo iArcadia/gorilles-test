@@ -3,7 +3,9 @@
 @section('title', 'Edition d\'une fiche événement - ' . $event->title)
 
 @section('content')
-<form id="event-form" action="{{ route('event.update', $event) }}" method="post">
+<form id="event-form" action="{{ route('event.update') }}" method="post">
+    <input type="hidden" name="id" value="{{ $event->id }}">
+    
     <table>
         <tbody>
             <tr>
@@ -49,10 +51,10 @@
         @foreach ($event->users as $user)
         <tr>
             <td>{{ $user->complete_name }}</td>
-            <td>{{ $user->created_at->format('d/m/Y') }}</td>
+            <td>{{ $user->pivot->created_at->format('d/m/Y') }}</td>
             <td>
                 <a href="{{ route('user.show', $user) }}">Fiche</a>
-                <a href="{{ route('reservation.destroy', [$event, $user]) }}" data-delete-reservation>Supprimer la réservation</a>
+                <a href="{{ route('reservation.destroy') }}" data-user-id="{{ $user->id }}">Supprimer la réservation</a>
             </td>
         </tr>
         @endforeach
@@ -65,7 +67,9 @@
 <h3>Ajouter une réservation</h3>
 
 @if ($users->count())
-<form id="reservation-form" action="{{ route('reservation.store', $event) }}" method="POST">
+<form id="reservation-form" action="{{ route('reservation.store') }}" method="POST">
+    <input type="hidden" name="event_id" value="{{ $event->id }}">
+    
     <select name="user_id">
         @foreach ($users as $user)
         <option value="{{ $user->id }}">{{ $user->complete_name }}</option>
@@ -87,14 +91,15 @@
         $('#event-form').on('submit', function(e) {
             e.preventDefault();
             
-            const self = this;
+            const self = this,
+                  eventId = +$('input[name=id]').val();
             
             $.ajax({
                 url: $(self).attr('action'),
                 type: 'PUT',
                 data: $(self).serialize(),
                 success: data => {
-                    window.location.replace(`{{ url('/') }}/event/show/${data.event.id}`);
+                    window.location.replace(`{{ url('/') }}/event/show/${eventId}`);
                 }
             });
         });
@@ -102,16 +107,24 @@
         // When the delete button of a reservation is clicked, ask confirmation first.
         // Then, if confirmed, call the API to delete the reservation.
         // Finally, reload the current page.
-        $('a[data-delete-reservation]').on('click', function(e) {
+        $('a[data-user-id]').on('click', function(e) {
             e.preventDefault();
             
             const self = this,
                 confirmation = window.confirm('Êtes-vous sûr de supprimer cette réservation ?');
             
             if (confirmation) {
+                const eventId = +$('input[name=id]').val(),
+                      userId = +$(self).data('user-id'),
+                      data = {
+                          eventId: eventId,
+                          userId: userId
+                      };
+                
                 $.ajax({
                     url: $(self).attr('href'),
                     type: 'DELETE',
+                    data: data,
                     success: data => {
                         window.location.reload();
                     }

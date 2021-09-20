@@ -26,7 +26,7 @@
             <td>
                 <a href="{{ route('event.show', $event) }}">Voir</a>
                 <a href="{{ route('event.edit', $event) }}">Modifier</a>
-                <a href="{{ route('event.destroy', $event) }}" data-delete-event>Supprimer</a>
+                <a href="{{ route('event.destroy') }}" data-event-id="{{ $event->id }}">Supprimer</a>
             </td>
         </tr>
         @endforeach
@@ -40,16 +40,22 @@
         // When the delete button of an event is clicked, ask confirmation first.
         // Then, if confirmed, call the API to (soft) delete the event and all his
         // reservations. Finally, reload the current page.
-        $('a[data-delete-event]').on('click', function(e) {
+        $('a[data-event-id]').on('click', function(e) {
             e.preventDefault();
             
             const self = this,
                 confirmation = window.confirm('Êtes-vous sûr de supprimer cet événement ?');
             
             if (confirmation) {
+                const eventId = +$(self).data('event-id'),
+                    data = {
+                        id: eventId
+                    };
+                
                 $.ajax({
                     url: $(self).attr('href'),
                     type: 'DELETE',
+                    data: data,
                     success: data => {
                         window.location.reload();
                     }
