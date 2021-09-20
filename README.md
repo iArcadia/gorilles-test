@@ -21,13 +21,14 @@ Une fois le projet téléchargé, éditez le fichier `.env` situé à la racine,
 
 (*principalement `APP_URL` suivant l'url que votre environnement donnera au projet, et les lignes `DB_`*)
 
-Puis, en ligne de commandes, déplacez-vous à la racine du projet, puis executez la commande suivante :
+Puis, en ligne de commandes, déplacez-vous à la racine du projet, puis executez les commandes suivantes :
 
 ```shell
+composer install
+
 # Cette commande permet de créer les tables de la BDD à partir des fichiers de migrations
 # puis de les remplir des jeux de tests via les fichiers de seed.
 php artisan migrate --seed
-
 # Si vous voulez revenir à cet état initial après avoir fait quelques tests, executez :
 php artisan migrate:refresh --seed
 ```
